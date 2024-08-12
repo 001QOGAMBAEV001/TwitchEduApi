@@ -29,12 +29,12 @@ app.use(express.json());
         console.log('MongoDB-ga muvaffaqiyatli ulandi app.js');
 
         // Routelarni ishga tushirish
-        app.use('/auth', authRoutes);
-        app.use('/users', userRoutes);
-        app.use('/streams', streamRoutes);
-        app.use('/groups', groupRoutes);
-        app.use('/ratings', ratingRoutes);
-        app.use('/notifications', notificationRoutes);
+        app.use('/api/auth', authRoutes);
+        app.use('/api/users', userRoutes);
+        app.use('/api/streams', streamRoutes);
+        app.use('/api/groups', groupRoutes);
+        app.use('/api/ratings', ratingRoutes);
+        app.use('/api/notifications', notificationRoutes);
 
         // Swagger UI
         app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -47,13 +47,13 @@ app.use(express.json());
         const DOMAIN = process.env.DOMAIN || 'localhost';
 
         app.listen(PORT, '0.0.0.0', () => {
-            console.log(`Server http://${DOMAIN}:${PORT} manzilida ishga tushdi`);
-            console.log(`Swagger dokumentatsiyasi http://${DOMAIN}:${PORT}/api-docs manzilida mavjud`);
+            console.log(`Server http://${DOMAIN}/api manzilida ishga tushdi`);
+            console.log(`Swagger dokumentatsiyasi http://${DOMAIN}/api-docs manzilida mavjud`);
         });
     } catch (error) {
         console.error('Serverni ishga tushirishda xatolik:');
         console.error('Xato xabari:', error.message);
-        console.error(`To'liq xato: `, error);
+        console.error('To'liq xato: ', error);
         process.exit(1);
     }
 })();
