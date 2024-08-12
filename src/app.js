@@ -53,7 +53,7 @@ app.use(express.json());
     } catch (error) {
         console.error('Serverni ishga tushirishda xatolik:');
         console.error('Xato xabari:', error.message);
-        console.error('To'liq xato: ', error);
+        console.error(`To'liq xato: `, error);
         process.exit(1);
     }
 })();
