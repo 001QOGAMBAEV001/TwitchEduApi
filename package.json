@@ -1,0 +1,22 @@
+{
+  "name": "twitch-edu-api",
+  "version": "1.0.0",
+  "description": "TwitchEduApi for educational streaming platform",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^10.0.0",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.13.0",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}

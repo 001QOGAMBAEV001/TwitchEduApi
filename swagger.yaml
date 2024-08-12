@@ -1,0 +1,918 @@
+openapi: 3.0.0
+info:
+  title: TwitchEduApi
+  version: 1.0.0
+  description: TwitchEduApi for educational streaming platform
+
+servers:
+  - url: https://kepket.uz
+    description: Production server
+  - url: http://localhost:3001
+    description: Local development server
+
+paths:
+  /auth/register/student:
+    post:
+      summary: Register a new student
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentRegister'
+      responses:
+        '201':
+          description: Student successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Server error
+
+  /auth/register/teacher:
+    post:
+      summary: Register a new teacher
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeacherRegister'
+      responses:
+        '201':
+          description: Teacher successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeacherResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Server error
+
+  /auth/login:
+    post:
+      summary: Login
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: Successfully logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Server error
+
+  /users/me:
+    get:
+      summary: Get current user
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Current user data
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/StudentResponse'
+                  - $ref: '#/components/schemas/TeacherResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server error
+    put:
+      summary: Update current user
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/StudentResponse'
+                  - $ref: '#/components/schemas/TeacherResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server error
+
+  /streams:
+    post:
+      summary: Create a new stream
+      tags:
+        - Streams
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StreamInput'
+      responses:
+        '201':
+          description: Stream created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreamResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server error
+    get:
+      summary: Get all streams
+      tags:
+        - Streams
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+        - in: query
+          name: group
+          schema:
+            type: string
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [ended, planned, live]
+      responses:
+        '200':
+          description: List of streams
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreamListResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server error
+
+  /streams/teacher:
+    get:
+      summary: Get teacher's streams
+      tags:
+        - Streams
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [ended, planned, live]
+      responses:
+        '200':
+          description: List of teacher's streams
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreamListResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server error
+
+  /streams/{id}:
+    get:
+      summary: Get a specific stream
+      tags:
+        - Streams
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Stream details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stream'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Stream not found
+        '500':
+          description: Server error
+    put:
+      summary: Update a stream
+      tags:
+        - Streams
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StreamInput'
+      responses:
+        '200':
+          description: Stream updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreamResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Stream not found
+        '500':
+          description: Server error
+    delete:
+      summary: Delete a stream
+      tags:
+        - Streams
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Stream deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Stream not found
+        '500':
+          description: Server error
+
+  /groups:
+    get:
+      summary: Get all groups
+      tags:
+        - Groups
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of groups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server error
+    post:
+      summary: Create a new group
+      tags:
+        - Groups
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupInput'
+      responses:
+        '201':
+          description: Group created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server error
+
+  /groups/{id}:
+    put:
+      summary: Update a group
+      tags:
+        - Groups
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupInput'
+      responses:
+        '200':
+          description: Group updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupResponse'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Group not found
+        '500':
+          description: Server error
+    delete:
+      summary: Delete a group
+      tags:
+        - Groups
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Group deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized
+        '404':
+          description: Group not found
+        '500':
+          description: Server error
+
+  /ratings/student/{studentId}:
+    post:
+      summary: Rate a student
+      tags:
+        - Ratings
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: studentId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RatingInput'
+      responses:
+        '201':
+          description: Rating added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RatingResponse'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Student not found
+        '500':
+          description: Server error
+    get:
+      summary: Get student ratings
+      tags:
+        - Ratings
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: studentId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: List of student ratings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RatingListResponse'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Student not found
+        '500':
+          description: Server error
+
+  /ratings/group/{groupId}:
+    get:
+      summary: Get group ratings
+      tags:
+        - Ratings
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: groupId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: List of group ratings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RatingListResponse'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Group not found
+        '500':
+          description: Server error
+
+  /notifications:
+    get:
+      summary: Get user notifications
+      tags:
+        - Notifications
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: List of notifications
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationListResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server error
+
+  /notifications/{id}/read:
+    put:
+      summary: Mark notification as read
+      tags:
+        - Notifications
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Notification marked as read
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationResponse'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Notification not found
+        '500':
+          description: Server error
+
+components:
+  schemas:
+    StudentRegister:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        tel_number:
+          type: string
+        group:
+          type: string
+      required:
+        - name
+        - email
+        - password
+        - tel_number
+        - group
+
+    TeacherRegister:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        tel_number:
+          type: string
+        channelName:
+          type: string
+        streamKey:
+          type: string
+        userName:
+          type: string
+      required:
+        - name
+        - email
+        - password
+        - tel_number
+        - channelName
+        - streamKey
+        - userName
+
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    LoginResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        token:
+          type: string
+        user:
+          oneOf:
+            - $ref: '#/components/schemas/StudentResponse'
+            - $ref: '#/components/schemas/TeacherResponse'
+
+    StudentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        tel_number:
+          type: string
+        group:
+          type: string
+        role:
+          type: string
+          enum: [student]
+
+    TeacherResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        tel_number:
+          type: string
+        channelName:
+          type: string
+        userName:
+          type: string
+        streamKey:
+          type: string
+        role:
+          type: string
+          enum: [teacher]
+
+    UserUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        tel_number:
+          type: string
+        group:
+          type: string
+        channelName:
+          type: string
+
+    StreamInput:
+      type: object
+      properties:
+      streamTitle:
+        type: string
+      description:
+        type: string
+      startTime:
+        type: string
+      format: date-time
+      endTime:
+        type: string
+        format: date-time
+      group:
+          type: string
+          required:
+            - streamTitle
+            - description
+            - startTime
+            - endTime
+            - group
+
+    StreamResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        stream:
+          $ref: '#/components/schemas/Stream'
+
+    Stream:
+      type: object
+      properties:
+        id:
+          type: string
+        streamTitle:
+          type: string
+        description:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        group:
+          type: string
+        teacherId:
+          type: string
+        teacherName:
+          type: string
+        status:
+          type: string
+          enum: [ended, planned, live]
+
+    StreamListResponse:
+      type: object
+      properties:
+        streams:
+          type: array
+          items:
+            $ref: '#/components/schemas/Stream'
+        totalCount:
+          type: integer
+        currentPage:
+          type: integer
+        totalPages:
+          type: integer
+
+    GroupInput:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+
+    GroupResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        group:
+          $ref: '#/components/schemas/Group'
+
+    Group:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+
+    RatingInput:
+      type: object
+      properties:
+        rating:
+          type: number
+        comment:
+          type: string
+      required:
+        - rating
+
+    RatingResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        rating:
+          $ref: '#/components/schemas/Rating'
+
+    Rating:
+      type: object
+      properties:
+        id:
+          type: string
+        studentId:
+          type: string
+        teacherId:
+          type: string
+        rating:
+          type: number
+        comment:
+          type: string
+        date:
+          type: string
+          format: date-time
+
+    RatingListResponse:
+      type: object
+      properties:
+        ratings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Rating'
+        totalCount:
+          type: integer
+        currentPage:
+          type: integer
+        totalPages:
+          type: integer
+
+    NotificationListResponse:
+      type: object
+      properties:
+        notifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+        totalCount:
+          type: integer
+        currentPage:
+          type: integer
+        totalPages:
+          type: integer
+
+    NotificationResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        notification:
+          $ref: '#/components/schemas/Notification'
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        type:
+          type: string
+          enum: [rating, stream]
+        content:
+          type: object
+          properties:
+            teacher_id:
+              type: string
+            student_id:
+              type: string
+            group:
+              type: string
+            rating:
+              type: number
+            description:
+              type: string
+            date:
+              type: string
+              format: date-time
+            streamTitle:
+              type: string
+            startTimeStream:
+              type: string
+              format: date-time
+            channelName:
+              type: string
+            teacherName:
+              type: string
+        isRead:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []

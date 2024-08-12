@@ -1,0 +1,66 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <Name>TwitchEduApi</Name>
+    <RootNamespace>TwitchEduApi</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>cbebaca4-727b-426c-b4be-b3a612fccfa0</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>src\app.js</StartupFile>
+    <StartWebBrowser>False</StartWebBrowser>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+    <StartWebBrowser>false</StartWebBrowser>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include=".env" />
+    <Content Include="src\app.js" />
+    <Content Include="src\config\database.js" />
+    <Content Include="src\middlewares\errorMiddleware.js" />
+    <Content Include="src\middlewares\authMiddleware.js" />
+    <Content Include="src\routes\authRoutes.js" />
+    <Content Include="src\routes\userRoutes.js" />
+    <Content Include="src\routes\ratingRoutes.js" />
+    <Content Include="src\routes\groupRoutes.js" />
+    <Content Include="src\routes\notificationRoutes.js" />
+    <Content Include="src\routes\streamRoutes.js" />
+    <Content Include="src\models\User.js" />
+    <Content Include="src\models\Rating.js" />
+    <Content Include="src\models\Notification.js" />
+    <Content Include="src\models\Group.js" />
+    <Content Include="src\models\Stream.js" />
+    <Content Include="src\controllers\notificationController.js" />
+    <Content Include="src\controllers\ratingController.js" />
+    <Content Include="src\controllers\groupController.js" />
+    <Content Include="src\controllers\streamController.js" />
+    <Content Include="src\controllers\userController.js" />
+    <Content Include="src\controllers\authController.js" />
+    <Content Include="package.json" />
+    <Content Include="README.md" />
+    <Content Include="swagger.yaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\config\" />
+    <Folder Include="src\" />
+    <Folder Include="src\middlewares\" />
+    <Folder Include="src\routes\" />
+    <Folder Include="src\models\" />
+    <Folder Include="src\controllers\" />
+  </ItemGroup>
+  <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
+</Project>
